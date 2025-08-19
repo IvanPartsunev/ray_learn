@@ -20,7 +20,7 @@ def update_policy(policy: Policy, experience: list, weight=0.1, discount_factor=
     policy.state_action_table[state][action] = new_value
 
 
-def train_policy(env: Environment, num_episodes=10, weight=0.1, discount_factor=0.9):
+def train_policy(env: Environment, num_episodes=1000, weight=0.1, discount_factor=0.9):
   """
   Training a policy by updating it with rollout experiences.
   """
@@ -30,7 +30,6 @@ def train_policy(env: Environment, num_episodes=10, weight=0.1, discount_factor=
   for _ in range(num_episodes):
     experience = sim.rollout(policy)
     update_policy(policy, experience, weight, discount_factor)
-
   return policy
 
 
