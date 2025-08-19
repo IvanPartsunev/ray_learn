@@ -19,6 +19,7 @@ class Simulation:
       action = policy.get_action(state, explore, epsilon)
       next_state, reward, done, info = self.env.step(action)
       experience.append([state, action, reward, next_state])
+      state = next_state
       if render:
         time.sleep(0.05)
         self.env.render()
