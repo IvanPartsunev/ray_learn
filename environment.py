@@ -13,8 +13,9 @@ class Environment:
   def __init__(self, actions: int = 4, size: int = 5, *args, **kwargs):
     self.size = size
     self.actions = actions
-    self.start_index = kwargs.get("start_index", 0)
-    self.start = (self.start_index, self.start_index)
+    self.start_x = kwargs.get("start_x", 0)
+    self.start_y = kwargs.get("start_y", self.start_x)
+    self.start = (self.start_x, self.start_y)
     self.end = (self.size - 1, self.size - 1)
     self.seeker, self.goal = self.start, self.end
     self.info = {"seeker": self.seeker, "goal": self.goal}
@@ -63,7 +64,7 @@ class Environment:
     print("\033[2J\033[H", end="")
 
     grid = [["| " for _ in range(self.size * 1)] + ["|\n"] for _ in range(self.size)]
-    grid[self.goal[0]][self.goal[1]] = "|E"
+    grid[self.goal[0]][self.goal[1]] = "|G"
     grid[self.seeker[0]][self.seeker[1]] = "|S"
     print(''.join([''.join(grid_row) for grid_row in grid]))
 
