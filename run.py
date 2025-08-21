@@ -7,11 +7,11 @@ from train import train_policy_parallel, train_policy
 
 # ray.init()
 #
-# num_episodes=10000
-environment = Environment()
+num_episodes=100000
+environment = Environment(size=10)
 #
 #
-# parallel_policy = train_policy_parallel(environment, num_episodes=num_episodes)
+parallel_policy = train_policy_parallel(environment, num_episodes=num_episodes)
 # evaluate_policy(environment, parallel_policy, num_episodes=num_episodes)
 
 # import time

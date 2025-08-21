@@ -2,7 +2,7 @@ import ray
 import time
 
 from environment import Environment
-from policy import Policy
+from policy import Policy, PolicyStore
 
 
 class Simulation:
@@ -12,6 +12,7 @@ class Simulation:
 
   def rollout(self, policy: Policy, render=False, explore=True, epsilon=0.1):
     """Returns experiences for a policy rollout."""
+
     experience = []
     state = self.env.reset()
     done = False
@@ -29,6 +30,4 @@ class Simulation:
 @ray.remote
 class SimulationActor(Simulation):
   """Ray actor for a Simulation."""
-  def __init__(self):
-    env = Environment()
-    super().__init__(env)
+  ...

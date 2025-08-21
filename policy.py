@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import ray
 
 from environment import Environment
 
@@ -24,3 +25,25 @@ class Policy:
       return self.action_space.sample()
     return np.argmax(self.state_action_table[state])
 
+
+@ray.remote
+class PolicyStore:
+  def __init__(self):
+    self.policy = None
+
+  def put_policy(self, policy: Policy):
+    self.policy = policy
+
+  def get_policy(self):
+    return self.policy
+
+  def update_policy(self, experience: list, weight=0.1, discount_factor=0.9):
+    """
+    Updates a given policy with a list of (state, action, reward, state)
+    experiences.
+    """
+    for state, action, reward, next_state in experience:
+      next_max = np.max(self.policy.state_action_table[next_state])
+      value = self.policy.state_action_table[state][action]
+      new_value = (1 - weight) * value + weight * (reward + discount_factor * next_max)
+      self.policy.state_action_table[state][action] = new_value
