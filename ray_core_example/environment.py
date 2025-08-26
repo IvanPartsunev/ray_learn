@@ -1,4 +1,5 @@
 import random
+from gymnasium.spaces import Discrete
 
 ACTIONS = {
   0: (1, 0),
@@ -6,12 +7,13 @@ ACTIONS = {
   2: (-1, 0),
   3: (0, 1),
 }
-class Discrete:
-  def __init__(self, num_actions: int):
-    self.n = num_actions
 
-  def sample(self):
-    return random.randint(0, self.n - 1)
+# class Discrete:
+#   def __init__(self, num_actions: int):
+#     self.n = num_actions
+#
+#   def sample(self):
+#     return random.randint(0, self.n - 1)
 
 
 class Environment:
