@@ -1,4 +1,6 @@
 import random
+import numpy as np
+from gymnasium import spaces
 from gymnasium.spaces import Discrete
 
 ACTIONS = {
@@ -17,28 +19,35 @@ ACTIONS = {
 
 
 class Environment:
-  def __init__(self, actions: int = 4, size: int = 5, *args, **kwargs):
-    self.size = size
-    self.actions = actions
-    self.start_x = kwargs.get("start_x", 0)
-    self.start_y = kwargs.get("start_y", self.start_x)
+  def __init__(self, config):
+    self.size = config.get("size", 5)
+    self.actions = config.get("actions", 4)
+    self.start_x = config.get("start_x", 0)
+    self.start_y = config.get("start_y", self.start_x)
     self.start = (self.start_x, self.start_y)
     self.end = (self.size - 1, self.size - 1)
     self.seeker, self.goal = self.start, self.end
     self.info = {"seeker": self.seeker, "goal": self.goal}
 
-    self.action_space = Discrete(actions)
-    self.observation_space = Discrete(self.size ** 2)
+    self.action_space = Discrete(self.actions)
+    self.observation_space = spaces.Box(
+      low=0, high=1, shape=(self.size * self.size,), dtype=np.float32
+    )
 
-  def reset(self) -> int:
+  def get_observation(self):
+    obs = np.zeros(self.size * self.size, dtype=np.float32)
+    idx = self.size * self.seeker[0] + self.seeker[1]
+    obs[idx] = 1.0
+    return obs
+
+  def reset(self, seed, options):
     """Reset seeker position and return observations."""
-    # self.seeker = self.start
-    self.seeker = random.randrange(0, self.size), random.randrange(0, self.size)
-    return self.get_observation()
+    self.seeker = self.start
+    # self.seeker = random.randrange(0, self.size), random.randrange(0, self.size)
+    obs = self.get_observation()
+    info = self.info
+    return obs, info
 
-  def get_observation(self) -> int:
-    """Encode the seeker position as integer"""
-    return self.size * self.seeker[0] + self.seeker[1]
 
   def get_reward(self) -> int:
     """Reward finding the goal"""
@@ -62,8 +71,9 @@ class Environment:
 
     obs = self.get_observation()
     rew = self.get_reward()
-    done = self.is_done()
-    return obs, rew, done, self.info
+    terminated = self.is_done()
+    truncated = False
+    return obs, rew, terminated, truncated, self.info
 
   def render(self, *args, **kwargs):
     """Render the environment, e.g., by printing its representation."""
