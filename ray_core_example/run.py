@@ -7,8 +7,8 @@ from train import train_policy_parallel, train_policy
 
 # ray.init()
 #
-num_episodes=100000
-environment = Environment(size=20)
+num_episodes=10000
+environment = Environment(size=5)
 #
 #
 parallel_policy = train_policy_parallel(environment, num_episodes=num_episodes)

@@ -1,6 +1,11 @@
 import random
 
-
+ACTIONS = {
+  0: (1, 0),
+  1: (0, -1),
+  2: (-1, 0),
+  3: (0, 1),
+}
 class Discrete:
   def __init__(self, num_actions: int):
     self.n = num_actions
@@ -25,7 +30,8 @@ class Environment:
 
   def reset(self) -> int:
     """Reset seeker position and return observations."""
-    self.seeker = self.start
+    # self.seeker = self.start
+    self.seeker = random.randrange(0, self.size), random.randrange(0, self.size)
     return self.get_observation()
 
   def get_observation(self) -> int:
@@ -42,16 +48,15 @@ class Environment:
 
   def step(self, action):
     """Take a step in a direction and return all available information."""
-    if action == 0:  # move down
-      self.seeker = (min(self.seeker[0] + 1, self.size - 1), self.seeker[1])
-    elif action == 1:
-      self.seeker = (self.seeker[0], max(self.seeker[1] - 1, 0))
-    elif action == 2:
-      self.seeker = (max(self.seeker[0] - 1, 0), self.seeker[1])
-    elif action == 3:
-      self.seeker = (self.seeker[0], min(self.seeker[1] + 1, self.size - 1))
-    else:
+
+    move = ACTIONS.get(action, None)
+    if not move:
       raise ValueError("Invalid action")
+
+    new_position = self.seeker[0] + move[0], self.seeker[1] + move[1]
+    valid = self.in_bound(new_position)
+    if valid:
+      self.seeker = new_position
 
     obs = self.get_observation()
     rew = self.get_reward()
@@ -68,3 +73,6 @@ class Environment:
     grid[self.seeker[0]][self.seeker[1]] = "|S"
     print(''.join([''.join(grid_row) for grid_row in grid]))
 
+  def in_bound(self, position: tuple[int, int]):
+    x, y = position
+    return 0 <= x < self.size and 0 <= y < self.size
